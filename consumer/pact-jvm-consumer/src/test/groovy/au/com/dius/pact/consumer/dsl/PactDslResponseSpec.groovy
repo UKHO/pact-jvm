@@ -109,6 +109,40 @@ class PactDslResponseSpec extends Specification {
     ]
   }
 
+  @Issue('???')
+  def 'should not generate duplicate content-type'() {
+    given:
+      def builder = ConsumerPactBuilder.consumer('spec').hasPactWith('provider')
+      def body = new PactDslJsonBody().numberValue('key', 1).close()
+
+    when:
+      def pact = builder
+            .given('Given the body method is invoked before the header method')
+            .uponReceiving('a request for some response')
+            .path('/bad/content-type/matcher')
+            .method('GET')
+            .willRespondWith()
+            .status(200)
+            .body(body)
+            .matchHeader('Content-Type', 'application/json')
+
+            .given('Given the body method is invoked after the header method')
+            .uponReceiving('a request for some response')
+            .path('/no/content-type/matcher')
+            .method('GET')
+            .willRespondWith()
+            .status(200)
+            .headers(['content-type': 'application/json'])
+            .body(body)
+            .toPact()
+
+      def responses = pact.interactions*.response
+
+    then:
+      responses[0].headers.size() == 1
+      responses[0].headers['Content-Type'].is(responses[0].headers['content-type'])
+  }
+
   @Issue('#748')
   def 'uponReceiving should pass the path on'() {
     given:

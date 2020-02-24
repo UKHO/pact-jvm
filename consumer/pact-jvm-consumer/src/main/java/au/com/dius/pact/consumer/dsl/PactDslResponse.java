@@ -1,5 +1,7 @@
 package au.com.dius.pact.consumer.dsl;
 
+import static com.google.common.collect.Lists.newArrayList;
+
 import au.com.dius.pact.consumer.ConsumerPactBuilder;
 import au.com.dius.pact.core.model.OptionalBody;
 import au.com.dius.pact.core.model.ProviderState;
@@ -19,16 +21,14 @@ import org.apache.http.entity.ContentType;
 import org.json.JSONObject;
 import org.w3c.dom.Document;
 
-import javax.xml.transform.TransformerException;
 import java.nio.charset.Charset;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
 import java.util.function.Supplier;
 import java.util.regex.Pattern;
-
-import static com.google.common.collect.Lists.newArrayList;
+import javax.xml.transform.TransformerException;
 
 public class PactDslResponse {
     private static final String CONTENT_TYPE = "Content-Type";
@@ -40,7 +40,7 @@ public class PactDslResponse {
     private final PactDslResponse defaultResponseValues;
 
     private int responseStatus = 200;
-    private Map<String, List<String>> responseHeaders = new HashMap<>();
+    private Map<String, List<String>> responseHeaders = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
     private OptionalBody responseBody = OptionalBody.missing();
     private MatchingRules responseMatchers = new MatchingRulesImpl();
     private Generators responseGenerators = new Generators();
