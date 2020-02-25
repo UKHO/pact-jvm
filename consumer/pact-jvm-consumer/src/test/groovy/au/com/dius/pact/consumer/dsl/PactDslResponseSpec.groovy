@@ -141,6 +141,7 @@ class PactDslResponseSpec extends Specification {
     then:
       responses[0].headers.size() == 1
       responses[0].headers['Content-Type'].is(responses[0].headers['content-type'])
+      responses[0].headers['content-type'] == ['application/json']
   }
 
   @Issue('#748')

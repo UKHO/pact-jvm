@@ -28,7 +28,7 @@ public abstract class PactDslRequestBase {
 
   protected final PactDslRequestWithoutPath defaultRequestValues;
   protected String requestMethod = "GET";
-  protected Map<String, List<String>> requestHeaders = new HashMap<>();
+  protected Map<String, List<String>> requestHeaders = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
   protected Map<String, List<String>> query = new HashMap<>();
   protected OptionalBody requestBody = OptionalBody.missing();
   protected MatchingRules requestMatchers = new MatchingRulesImpl();

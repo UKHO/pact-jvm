@@ -133,4 +133,31 @@ class PactDslRequestWithPathSpec extends Specification {
     ]
   }
 
+  @Issue('???')
+  def 'should not generate duplicate content-type'() {
+    given:
+    def builder = ConsumerPactBuilder.consumer('spec').hasPactWith('provider')
+    def body = new PactDslJsonBody().numberValue('key', 1).close()
+
+    when:
+    def pact = builder
+            .given('Given the body method is invoked before the header method')
+            .uponReceiving('a request for some response')
+            .path('/bad/content-type/matcher')
+            .headers("Content-Type", "application/json")
+            .body(body)
+            .method('POST')
+            .willRespondWith()
+            .status(200)
+            .body(body)
+            .matchHeader('Content-Type', 'application/json')
+            .toPact()
+
+    def request = pact.interactions*.request[0]
+
+    then:
+    request.headers['Content-Type'] == request.headers['content-type']
+    request.headers['Content-Type'] == ['application/json']
+  }
+
 }
